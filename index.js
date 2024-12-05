@@ -19,7 +19,11 @@ app.use(express.json());
 
 // obtener todos los alumnos
 app.get("/api/alumnos", (req, res) => {
+  try {
     res.status(200).json(alumnos);
+  } catch (error) {
+    res.json({})
+  }
 });
 
 // obtener alumno por id
@@ -95,9 +99,10 @@ app.delete("/api/alumnos/:id", (req, res) => {
 });
 
 
-app.listen(1234, () => {
-  console.log(`Server on http://localhost:1234`);  
+const PORT = process.env.PORT
+
+app.listen(PORT, () => {
+  console.log(`Server on http://localhost:${PORT}`);  
 });
 
 process.loadEnvFile();
-const PORT = process.env.PORT
