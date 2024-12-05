@@ -22,7 +22,7 @@ app.get("/api/alumnos", (req, res) => {
   try {
     res.status(200).json(alumnos);
   } catch (error) {
-    res.json({})
+    res.status(500).json({ error: error.message });
   }
 });
 
