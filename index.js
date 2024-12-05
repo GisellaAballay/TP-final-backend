@@ -2,66 +2,102 @@ import express from "express";
 import { log } from "node:console";
 import crypto from "node:crypto";
 
-let users = [
-  {id: "1", name: "John Doe", age: "25"},
-  {id: "2", name: "Jane Smith", age: "30"}
-]
+let turnos = [
+  {id: "1", name: "Técnica", hours: "Lunes y Miercoes: 20hs"},
+  {id: "2", name: "Jazz", hours: "Martes, Jueves y Viernes: 19hs"},
+  {id: "3", name: "Heels", hours: "Lunes y Miercoles: 18hs"},
+  {id: "4", name: "Theatre Jazz", hours: "Martes, jueves y Viernes: 20hs"},
+  {id: "5", name: "Invertidas", hours: "Lunes, Martes Y Miercoles: 21hs"},
+  {id: "6", name: "Flexi", hours: "Lunes, Miercoles y Viernes: 17hs"},
+];
+
+let alumnos = [];
 
 const app = express();
 // Middleware
 app.use(express.json());
 
-// get all users
-app.get("/api/users", (req,res) => {
-  res.json(users);
+// obtener todos los alumnos
+app.get("/api/alumnos", (req, res) => {
+    res.status(200).json(alumnos);
+});
+
+// obtener alumno por id
+app.get("/api/alumnos/:id", (req, res) => {
+  const alumno = alumnos.find((alumno) => alumno.id === id);
+  if(!alumno) return res.status(404).json({ error: "Alumno no encontrado" });
+  res.status(200).json(alumno);
 })
 
-// get one user by id
-app.get("/api/users/:id", (req,res) => {
-  const id = req.params.id;
-  const user = users.find(user => user.id === id);
-  if(!user) return res.json({ error: 404 });
-  res.json(user);
-})
+// Resgistrar nuevo alumno
+app.post("/api/alumnos", (req, res) => {
+  const { name, email, turnosSeleccionados} = req.body;
+  if (!name || !email) {
+    return res.status(400).json({ error: "Faltan datos obligatorios" });
+  }
 
-// create user
-app.post("/api/users", (req, res) => {
-  const { name, age } = req.body;
+  // validar los turnos
+  const turnosValidos = turnosSeleccionados?.every(
+    (id) => turnos.some((turno) => turno.id ===id)
+  );
+  if (turnosSeleccionados && !turnosValidos) {
+    return res.status(400).json({ error: "Algunos turnos no son válidos"})
+  }
 
-  const newUser ={
+  const newAlumno = {
     id: crypto.randomUUID(),
     name,
-    age,
+    email,
+    turnosSeleccionados: turnosSeleccionados || [],
   };
 
-  users.push(newUser);
-
-  res.json({ name, age });
+  alumnos.push(newAlumno);
+  res.status(201).json(newAlumno);
 });
 
-// update user
-app.put("/api/users/:id", (req, res) => {
+// actualizar info del alumno con turno
+app.put("/api/alumno/:id", (req, res) => {
   const { id } = req.params;
-  const {name, age} = req.body;
-  const user = users.find((user) => user.id === id);
-  if (!user) return res.json({ error: 404 });
-  if(name) user.name = name;
-  if(age) user.age = age;
+  const {name, email, turnosSeleccionados} = req.body;
 
-  res.json(user);
+  const alumno = alumnos.find((alumno) => alumno.id === id);
+  if (!alumno) return res.status(404).json( { error: "Alumno no encontrado" });
+
+  if(name) alumno.name = name;
+  if(hours) alumno.email = email;
+
+  // Validar y actualizar los turnos seleccionados
+  if (turnosSeleccionados) {
+    const turnosValidos = turnosSeleccionados.every((id) =>
+      turnos.some((turno) => turno.id === id)
+    );
+    if (!turnosValidos) {
+      return res.status(400).json({ error: "Algunos turnos no son válidos" });
+    }
+    alumno.turnosSeleccionados = turnosSeleccionados;
+  }
+
+  res.status(200).json(alumno);
 });
  
-app.delete("/api/users/:id", (req, res) => {
+// Eliminar alumno y sus tunos 
+
+app.delete("/api/alumnos/:id", (req, res) => {
   const { id } = req.params;
-  const user = users.find((user) => user.id === id);
-  if (!user) return res.json({ error: 404 });
-  users = users.filter((user) => user.id !== id);
-  res.json(user);
+
+  const alumnoIndex = alumnos.findIndex((alumno) => alumno.id === id);
+  if (alumnoIndex === -1) {
+    return res.status(404).json({ error: "Alumno no encontrado" });
+  }
+
+  const [deletedAlumno] = alumnos.splice(alumnoIndex, 1);
+  res.status(200).json(deletedAlumno);
 });
+
 
 app.listen(1234, () => {
   console.log(`Server on http://localhost:1234`);  
-})
+});
 
 process.loadEnvFile();
 const PORT = process.env.PORT
