@@ -1,4 +1,6 @@
 import express from "express";
+import { log } from "node:console";
+import crypto from "node:crypto";
 
 let users = [
   {id: "1", name: "John Doe", age: "25"},
@@ -6,6 +8,8 @@ let users = [
 ]
 
 const app = express();
+// Middleware
+app.use(express.json());
 
 // get all users
 app.get("/api/users", (req,res) => {
@@ -19,6 +23,25 @@ app.get("/api/users/:id", (req,res) => {
   if(!user) return res.json({ error: 404 });
   res.json(user);
 })
+
+// create user
+app.post("/api/users", (req, res) => {
+  const { name, age } = req.body;
+
+  const newUser ={
+    id: crypto.randomUUID(),
+    name,
+    age,
+  };
+
+  users.push(newUser);
+
+  res.json({ name, age });
+});
+
+// app.put("api/users", (req, res) => {});
+// 
+// app.delete("api/users", (req, res) => {});
 
 app.listen(1234, () => {
   console.log(`Server on http://localhost:1234`);  
