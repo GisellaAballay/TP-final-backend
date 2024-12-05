@@ -51,7 +51,13 @@ app.put("/api/users/:id", (req, res) => {
   res.json(user);
 });
  
-// app.delete("/api/users", (req, res) => {});
+app.delete("/api/users/:id", (req, res) => {
+  const { id } = req.params;
+  const user = users.find((user) => user.id === id);
+  if (!user) return res.json({ error: 404 });
+  users = users.filter((user) => user.id !== id);
+  res.json(user);
+});
 
 app.listen(1234, () => {
   console.log(`Server on http://localhost:1234`);  
