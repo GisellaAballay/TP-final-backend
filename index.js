@@ -39,9 +39,19 @@ app.post("/api/users", (req, res) => {
   res.json({ name, age });
 });
 
-// app.put("api/users", (req, res) => {});
-// 
-// app.delete("api/users", (req, res) => {});
+// update user
+app.put("/api/users/:id", (req, res) => {
+  const { id } = req.params;
+  const {name, age} = req.body;
+  const user = users.find((user) => user.id === id);
+  if (!user) return res.json({ error: 404 });
+  if(name) user.name = name;
+  if(age) user.age = age;
+
+  res.json(user);
+});
+ 
+// app.delete("/api/users", (req, res) => {});
 
 app.listen(1234, () => {
   console.log(`Server on http://localhost:1234`);  
