@@ -1,7 +1,11 @@
 let alumnos = [];
 let turnos = [
-  { id: "1", name: "Técnica", hours: "Lunes y Miércoles: 20hs" },
-  { id: "2", name: "Jazz", hours: "Martes, Jueves y Viernes: 19hs" },
+  {id: "1", name: "Técnica", hours: "Lunes y Miercoes: 20hs"},
+  {id: "2", name: "Jazz", hours: "Martes, Jueves y Viernes: 19hs"},
+  {id: "3", name: "Heels", hours: "Lunes y Miercoles: 18hs"},
+  {id: "4", name: "Theatre Jazz", hours: "Martes, jueves y Viernes: 20hs"},
+  {id: "5", name: "Invertidas", hours: "Lunes, Martes Y Miercoles: 21hs"},
+  {id: "6", name: "Flexi", hours: "Lunes, Miercoles y Viernes: 17hs"},
 ];
 
 export const getMe = (req, res) => {
