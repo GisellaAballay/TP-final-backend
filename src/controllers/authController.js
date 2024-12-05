@@ -2,9 +2,9 @@ import crypto from "node:crypto";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const SECRET_KEY = "mi_secreto_super_seguro"; // Cambia esta clave en producción
+const SECRET_KEY = "PanConManteca"; 
 
-let alumnos = []; // Puedes mover esto a un archivo de datos o usar una base de datos
+let alumnos = []; 
 
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
