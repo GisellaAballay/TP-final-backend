@@ -9,6 +9,33 @@ const turnos = [
   {id: "6", name: "Flexi", hours: "Lunes, Miercoles y Viernes: 17hs"},
 ];
 
+export const registerAlumno = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: "Faltan datos requeridos" });
+    }
+
+    const existingAlumno = await Alumno.findOne({ email });
+    if (existingAlumno) {
+      return res.status(400).json({ error: "El email ya está registrado" });
+    }
+
+    const newAlumno = new Alumno({
+      name,
+      email,
+      password, 
+      turnosSeleccionados: [],
+    });
+
+    await newAlumno.save();
+    res.status(201).json({ message: "Alumno registrado con éxito", alumno: newAlumno });
+  } catch (error) {
+    res.status(500).json({ error: "Error al registrar al alumno" });
+  }
+};
+
 export const getMe = async (req, res) => {
   try {
     const alumno = await Alumno.findById(req.alumnoId);
