@@ -1,3 +1,5 @@
+// Se utiliza para protejer rutas
+
 import jwt from "jsonwebtoken";
 
 const SECRET_KEY = "PanConManteca";

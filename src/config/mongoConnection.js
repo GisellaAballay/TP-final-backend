@@ -1,3 +1,5 @@
+// Configuración para la conexón de db
+
 import mongoose from "mongoose"
 process.loadEnvFile();
 
