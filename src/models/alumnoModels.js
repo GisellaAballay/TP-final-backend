@@ -5,9 +5,16 @@ import mongoose from "mongoose";
 
 // definir schema de la entidad
 const alumnoSchema = new mongoose.Schema({
-  name: {type: String},
-  email: {type: email},
-  turnos: {type: String}
+  name: {type: String, required: true},
+  email: { 
+    type: String, 
+    required: true, 
+    unique: true,
+    match: /.+\@.+\..+/
+  },
+  turnosSeleccionados: [{ type: String }]
 });
 
-const alumnoTurno = mongoose.model("alumnos", alumnoSchema)
+const Alumno = mongoose.model("Alumno", alumnoSchema);
+
+export default Alumno;
