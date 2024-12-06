@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 const alumnoSchema = new mongoose.Schema({
   name: {type: String},
   email: {type: email},
-  horario: {type: String}
+  turnos: {type: String}
 });
 
+const alumnoTurno = mongoose.model("alumnos", alumnoSchema)
