@@ -2,19 +2,24 @@
 
 import jwt from "jsonwebtoken";
 
-const SECRET_KEY = "PanConManteca";
+const SECRET_KEY = process.env.SECRET_KEY || "PanConManteca";
 
 export const verifyToken = (req, res, next) => {
-  const token = req.headers["authorization"]?.split(" ")[1];
-  if (!token) {
+  const authHeader = req.headers["authorization"];
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ error: "Token no proporcionado" });
   }
 
+  const token = authHeader.split(" ")[1];
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
     req.userId = decoded.id;
     next();
   } catch (err) {
-    res.status(401).json({ error: "Token inválido o expirado" });
+    if (err.name === "TokenExpiredError") {
+      res.status(401).json({ error: "Token expirado" });
+    } else {
+      res.status(401).json({ error: "Token inválido" });
+    }
   }
 };
