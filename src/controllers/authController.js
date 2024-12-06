@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import Alumno from "../models/alumnoModel.js";
 
-const SECRET_KEY = "PanConManteca";
+const SECRET_KEY = process.env.SECRET_KEY;
 
 export const register = async (req, res) => {
   const { name, email, password } = req.body;

@@ -1,6 +1,5 @@
-import { createUser, findUserByUsername } from "../models/userModels.js";
+import User from "../models/userModels.js";
 import jwt from "jsonwebtoken";
-import crypto from "crypto";
 import bcrypt from "bcryptjs";
 
 const SECRET_KEY = "PanConManteca";
@@ -12,18 +11,24 @@ export const registerUser = async (req, res) => {
     return res.status(400).json({ error: "Faltan datos obligatorios" });
   }
 
-  const existingUser = findUserByUsername(username);
-  if (existingUser) {
+  try{
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
     return res.status(400).json({ error: "El usuario ya existe" });
-  }
+    }
+    const hashedPassword=await bcrypt.hash(password, 10);
+    const newUser = new User({
+      username,
+      password: hashedPassword,
+    });
 
-  const newUser = await createUser({
-    id: crypto.randomUUID(),
-    username,
-    password,
-  });
+    await newUser.save();
 
-  res.status(201).json({ message: "Usuario registrado exitosamente", user: newUser });
+    res.status(201).json({ message: "Usuario registrado exitosamente", user: newUser });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al registrar el usuario" });
+  };
 };
 
 export const loginUser = async (req, res) => {
@@ -32,19 +37,21 @@ export const loginUser = async (req, res) => {
   if (!username || !password) {
     return res.status(400).json({ error: "Faltan datos obligatorios" });
   }
-
-  const user = findUserByUsername(username);
-  if (!user) {
+  try{
+    const user = await User.findOne({ username });
+    if (!user) {
     return res.status(404).json({ error: "Usuario no encontrado" });
-  }
-
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) {
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
     return res.status(401).json({ error: "Contraseña incorrecta" });
+    }
+    const token = jwt.sign({ id: user._id, username: user.username }, SECRET_KEY, { expiresIn: "1h" });
+
+    res.status(200).json({ message: "Inicio de sesión exitoso", token });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al iniciar sesión" });
   }
-
-  const token = jwt.sign({ id: user.id, username: user.username }, SECRET_KEY, { expiresIn: "1h" });
-
-  res.status(200).json({ message: "Inicio de sesión exitoso", token });
 };
 
