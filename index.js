@@ -1,4 +1,5 @@
 import express from "express";
+import mongoose from "mongoose";
 import dotenv from "dotenv";
 import authRoutes from "./src/routes/authRoutes.js";
 import alumnoRoutes from "./src/routes/alumnoRoutes.js";
@@ -16,9 +17,20 @@ app.use("/api/users", userRoutes);
 
 const PORT = process.env.PORT || 1507;
 
-app.listen(PORT, () => {
-  connectDb();
-  console.log(`Server on http://localhost:${PORT}`);  
-});
 
-process.loadEnvFile();
+const startServer = async () => {
+  try {
+    await connectDb(); 
+    console.log("Conexión a MongoDB exitosa");
+
+    app.listen(PORT, () => {
+      console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error("Error al conectar a MongoDB:", error.message);
+    process.exit(1)
+  };
+}
+
+
+startServer();
