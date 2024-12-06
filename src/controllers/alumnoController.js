@@ -1,4 +1,4 @@
-import Alumno from "../models/alumnoModels";
+import Alumno from "../models/alumnoModels.js";
 
 const turnos = [
   {id: "1", name: "Técnica", hours: "Lunes y Miercoes: 20hs"},

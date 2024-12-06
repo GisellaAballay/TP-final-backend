@@ -1,5 +1,4 @@
 import express from "express";
-import mongoose from "mongoose";
 import dotenv from "dotenv";
 import authRoutes from "./src/routes/authRoutes.js";
 import alumnoRoutes from "./src/routes/alumnoRoutes.js";
@@ -31,6 +30,5 @@ const startServer = async () => {
     process.exit(1)
   };
 }
-
 
 startServer();
