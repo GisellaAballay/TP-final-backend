@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const SECRET_KEY = "PanConManteca"; 
+const SECRET_KEY = "LalaLand"; 
 
 let alumnos = []; 
 
