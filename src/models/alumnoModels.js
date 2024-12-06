@@ -12,6 +12,7 @@ const alumnoSchema = new mongoose.Schema({
     unique: true,
     match: /.+\@.+\..+/
   },
+  password: {type: String, required: true },
   turnosSeleccionados: [{ type: String }]
 });
 
