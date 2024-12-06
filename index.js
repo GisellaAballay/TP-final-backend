@@ -8,7 +8,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/alumnos", alumnoRoutes);
 
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 1507;
 
 app.listen(PORT, () => {
   console.log(`Server on http://localhost:${PORT}`);  
