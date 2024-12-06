@@ -10,11 +10,11 @@ const URI_DB = process.env.URI_DB;
 
 const connectDb = async () => {
   try{
-    await mongoose.connectDb(URI_DB)
+    await mongoose.connect(URI_DB);
     console.log("Conexión exitosa");
   } catch {
     console.log("Conexión fallida");
-  }
+  };
 };
 
 export { connectDb }
