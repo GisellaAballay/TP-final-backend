@@ -1,41 +1,50 @@
-import bcrypt from "bcryptjs";
+import { createUser, findUserByUsername } from "../models/userModel.js";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
+import bcrypt from "bcryptjs";
 
-const users = [];
+const SECRET_KEY = "PanConManteca";
 
 export const registerUser = async (req, res) => {
   const { username, password } = req.body;
+
   if (!username || !password) {
-    return res.status(400).json({ error: "Faltan campos requeridos" });
+    return res.status(400).json({ error: "Faltan datos obligatorios" });
   }
-  const userExists = users.find((user) => user.username === username);
-  if (userExists) {
+
+  const existingUser = findUserByUsername(username);
+  if (existingUser) {
     return res.status(400).json({ error: "El usuario ya existe" });
   }
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = { id: users.length + 1, username, password: hashedPassword };
-  users.push(newUser);
 
-  res.status(201).json({ message: "Usuario registrado correctamente" });
+  const newUser = await createUser({
+    id: crypto.randomUUID(),
+    username,
+    password,
+  });
+
+  res.status(201).json({ message: "Usuario registrado exitosamente", user: newUser });
 };
-
 
 export const loginUser = async (req, res) => {
   const { username, password } = req.body;
+
   if (!username || !password) {
-    return res.status(400).json({ error: "Faltan campos requeridos" });
+    return res.status(400).json({ error: "Faltan datos obligatorios" });
   }
-  const user = users.find((user) => user.username === username);
+
+  const user = findUserByUsername(username);
   if (!user) {
     return res.status(404).json({ error: "Usuario no encontrado" });
   }
+
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
-    return res.status(401).json({ error: "Credenciales incorrectas" });
+    return res.status(401).json({ error: "Contraseña incorrecta" });
   }
-  const token = jwt.sign({ id: user.id, username: user.username }, "clave-secreta", {
-    expiresIn: "1h", 
-  });
+
+  const token = jwt.sign({ id: user.id, username: user.username }, SECRET_KEY, { expiresIn: "1h" });
 
   res.status(200).json({ message: "Inicio de sesión exitoso", token });
 };
+
