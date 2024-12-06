@@ -74,3 +74,18 @@ export const updateTurnos = async (req, res) => {
   }
 };
 
+export const deleteAlumno = async (req, res) => {
+  try {
+    const alumnoId = req.params.id; 
+    const alumno = await Alumno.findByIdAndDelete(alumnoId);
+
+    if (!alumno) {
+      return res.status(404).json({ error: "Alumno no encontrado" });
+    }
+
+    res.status(200).json({ message: "Alumno eliminado con éxito" });
+  } catch (error) {
+    res.status(500).json({ error: "Error al eliminar el alumno" });
+  }
+};
+
