@@ -1,6 +1,7 @@
 // Se utiliza para protejer rutas
 
 import jwt from "jsonwebtoken";
+import { validationResult } from "express-validator";
 
 const SECRET_KEY = process.env.SECRET_KEY || "PanConManteca";
 
@@ -22,4 +23,12 @@ export const verifyToken = (req, res, next) => {
       res.status(401).json({ error: "Token inválido" });
     }
   }
+};
+
+export const validateRequest = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  next();
 };

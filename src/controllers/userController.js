@@ -2,16 +2,14 @@ import User from "../models/userModels.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
-const SECRET_KEY = "PanConManteca";
+const SECRET_KEY = process.env.SECRET_KEY;
 
-export const registerUser = async (req, res) => {
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    return res.status(400).json({ error: "Faltan datos obligatorios" });
-  }
-
+const registerUser = async (req, res) => {
   try{
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ error: "Faltan datos obligatorios" });
+    }
     const existingUser = await User.findOne({ username });
     if (existingUser) {
     return res.status(400).json({ error: "El usuario ya existe" });
@@ -21,7 +19,6 @@ export const registerUser = async (req, res) => {
       username,
       password: hashedPassword,
     });
-
     await newUser.save();
 
     res.status(201).json({ message: "Usuario registrado exitosamente", user: newUser });
@@ -31,7 +28,7 @@ export const registerUser = async (req, res) => {
   };
 };
 
-export const loginUser = async (req, res) => {
+const loginUser = async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
@@ -55,3 +52,4 @@ export const loginUser = async (req, res) => {
   }
 };
 
+export { registerUser, loginUser }

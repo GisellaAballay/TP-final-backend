@@ -1,42 +1,37 @@
 import Alumno from "../models/alumnoModels.js";
+import Turno from "../models/turnoModels.js";
+import User from "../models/userModels.js";
 
-const turnos = [
-  {id: "1", name: "Técnica", hours: "Lunes y Miercoes: 20hs"},
-  {id: "2", name: "Jazz", hours: "Martes, Jueves y Viernes: 19hs"},
-  {id: "3", name: "Heels", hours: "Lunes y Miercoles: 18hs"},
-  {id: "4", name: "Theatre Jazz", hours: "Martes, jueves y Viernes: 20hs"},
-  {id: "5", name: "Invertidas", hours: "Lunes, Martes Y Miercoles: 21hs"},
-  {id: "6", name: "Flexi", hours: "Lunes, Miercoles y Viernes: 17hs"},
-];
-
-export const registerAlumno = async (req, res) => {
+const enrollAlumno = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-
-    if (!name || !email || !password) {
+    const { username, turnosSeleccionados } = req.body;
+    if (!username || !turnosSeleccionados) {
       return res.status(400).json({ error: "Faltan datos requeridos" });
     }
 
-    const existingAlumno = await Alumno.findOne({ email });
-    if (existingAlumno) {
-      return res.status(400).json({ error: "El email ya está registrado" });
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(400).json({ error: "Usurario no encontrado" });
     }
 
-    const newAlumno = new Alumno({
-      name,
-      email,
-      password, 
-      turnosSeleccionados: [],
-    });
+    const turnosValidos = await Turno.find({ _id: { $in: turnosSeleccionados } });
+    if (turnosValidos.length !== turnosSeleccionados.length) {
+      return res.status(400).json({ error: "Algunos turnos no son válidos" });
+    }
 
-    await newAlumno.save();
-    res.status(201).json({ message: "Alumno registrado con éxito", alumno: newAlumno });
+    const alumno = await Alumno.findOneAndUpdate(
+      { userId: user._id },
+      { username, turnosSeleccionados },
+      { new: true, upsert: true }
+    );
+
+    res.status(201).json({ message: "Alumno inscrito con éxito", alumno });
   } catch (error) {
-    res.status(500).json({ error: "Error al registrar al alumno" });
+    res.status(500).json({ error: "Error al inscribir al alumno" });
   }
 };
 
-export const getMe = async (req, res) => {
+const getMe = async (req, res) => {
   try {
     const alumno = await Alumno.findById(req.alumnoId);
     if (!alumno) {
@@ -46,17 +41,16 @@ export const getMe = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: "Error al obtener el alumno" });
   }
-};
+}; 
 
-export const updateTurnos = async (req, res) => {
+const updateTurnos = async (req, res) => {
   try {
     const { turnosSeleccionados } = req.body;
-    const turnosValidos = turnosSeleccionados.every((id) =>
-      turnos.some((t) => t.id === id)
-    );
-    if (!turnosValidos) {
+    const turnosValidos = await Turno.find({ _id: { $in: turnosSeleccionados } });
+    if (turnosValidos.length !== turnosSeleccionados.length) {
       return res.status(400).json({ error: "Algunos turnos no son válidos" });
     }
+
     const alumno = await Alumno.findByIdAndUpdate(
       req.alumnoId,
       { turnosSeleccionados },
@@ -74,7 +68,7 @@ export const updateTurnos = async (req, res) => {
   }
 };
 
-export const deleteAlumno = async (req, res) => {
+const deleteAlumno = async (req, res) => {
   try {
     const alumnoId = req.params.id; 
     const alumno = await Alumno.findByIdAndDelete(alumnoId);
@@ -89,3 +83,4 @@ export const deleteAlumno = async (req, res) => {
   }
 };
 
+export { enrollAlumno, getMe, updateTurnos, deleteAlumno }
