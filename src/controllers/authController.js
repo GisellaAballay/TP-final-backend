@@ -1,10 +1,16 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import Alumno from "../models/alumnoModel.js";
+import { validationResult } from "express-validator";
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
 export const register = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+ 
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
@@ -32,8 +38,12 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  
   const { email, password } = req.body;
-
   try {
     const alumno = await Alumno.findOne({ email });
     if (!alumno) {
