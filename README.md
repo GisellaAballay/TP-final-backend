@@ -1,3 +1,4 @@
+## API de Gestión de Inscripción de Turnos
 ### Descripción
 Esta API permite gestionar la inscripción de turnos de alumnos. Los alumnos pueden registrarse o iniciar sesión para acceder a funcionalidades protegidas como seleccionar turnos. Utiliza MongoDB para la base de datos y `express-validator` para la validación de datos.
 
@@ -91,8 +92,9 @@ Cuerpo de la solicitud (JSON):
 ```
 ##### e) Eliminar un turno
 
-Ruta: **/api/turnos/:id**
-Método: **DELETE**
+Ruta: `/api/turnos/:id`
+Método: `DELETE`
+
 #### Tecnologías utilizadas
 - Backend
 	- Node.js con Express.js
