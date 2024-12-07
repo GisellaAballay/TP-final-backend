@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 const turnoSchema = new mongoose.Schema({
   name: { type: String, required: true },
   hours: { type: String, required: true },
+  profesor : { type: String, required: true },
 });
 
 const Turno = mongoose.model("Turno", turnoSchema);
