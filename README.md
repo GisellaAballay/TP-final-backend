@@ -55,6 +55,18 @@ Los datos enviados en las solicitudes son validados con `express-validator`. Si 
 }
 ```
 #### Gestión de turnos
+##### Crear un nuevo turno
+
+Ruta: `/api/alumnos/inscribir`
+Método: `POST`
+Cuerpo de la solicitud (JSON):
+
+```json
+{
+  "username": "Nombre del alumno",
+  "turnosSeleccionados": "id del turno",
+}
+```
 ##### a)Obtener todos los turnos
 
 Ruta: `/api/turnos`
