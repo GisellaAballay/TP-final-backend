@@ -3,7 +3,7 @@
 import jwt from "jsonwebtoken";
 import { validationResult } from "express-validator";
 
-const SECRET_KEY = process.env.JWT_SECRET || "PanConManteca";
+const SECRET_KEY = process.env.JWT_SECRET;
 
 export const verifyToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];

@@ -1,5 +1,5 @@
-import express from "express";
 import dotenv from "dotenv";
+import express from "express";
 import authRoutes from "./src/routes/authRoutes.js";
 import alumnoRoutes from "./src/routes/alumnoRoutes.js";
 import { connectDb } from "./src/config/mongoConnection.js"
