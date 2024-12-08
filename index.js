@@ -1,10 +1,11 @@
 import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import authRoutes from "./src/routes/authRoutes.js";
 import alumnoRoutes from "./src/routes/alumnoRoutes.js";
 import { connectDb } from "./src/config/mongoConnection.js"
 
-dotenv.config();
 
 const app = express();
 app.use(express.json());
