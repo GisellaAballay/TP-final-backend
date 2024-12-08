@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import Alumno from "../models/alumnoModel.js";
 import { validationResult } from "express-validator";
 
-const SECRET_KEY = process.env.SECRET_KEY;
+const SECRET_KEY = process.env.JWT_SECRET;
 
 export const register = async (req, res) => {
   const errors = validationResult(req);

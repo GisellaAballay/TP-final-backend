@@ -26,14 +26,13 @@ Los datos enviados en las solicitudes son validados con `express-validator`. Si 
 
 ### Endpoints disponibles
 #### Registro de usuarios
-- Ruta: **/api/users/register**
+- Ruta: **/api/auth/register**
 - Método: **POST**
 - Cuerpo de la solicitud (JSON):
 
 ```json
 {
   "username": "nombre_de_usuario",
-  "email": "correo@ejemplo.com",
   "password": "contraseña_segura"
 }
 ```
